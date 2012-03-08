@@ -1,0 +1,3 @@
+:HTMLMinifier
+
+をhtml上で実行すればファイルと同改装に~.min.htmlとして書き出します。
