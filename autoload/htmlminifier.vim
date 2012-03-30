@@ -3,7 +3,34 @@
 "VERSION:  0.9
 "LICENSE:  MIT
 
-function! htmlminifier#HTMLMinifier()
+function! htmlminifier#CommentRemove()
+    let line = getline('.')
+    let end = 0
+    let ret = ''
+
+    while end == 0
+        let i = matchlist(line, '\v(.{-})\<\!\-\-(.{-})\-\-\>(.*)')
+
+        if i != []
+            let min = i[1]
+
+            let j = matchlist(i[2], '\v^(\[if)(.{-})(\[endif\])')
+            if j != []
+                let min = min.'<!--'.i[2].'-->'
+            endif
+
+            let ret = ret.min
+            let line = i[3]
+        else
+            let ret = ret.line
+            let end = 1
+        endif
+    endwhile
+
+    echo ret
+    call setline('.', ret)
+endfunction
+function! htmlminifier#Minifier()
     " remove return & indent
     let html = readfile(expand('%'))
     let ret = ''
@@ -54,4 +81,4 @@ function! htmlminifier#HTMLMinifier()
     let ret = min
 
     call system('echo -e "'.min.'" > '.expand('%:p:r').'.min.'.expand('%:e'))
-endfunction
+endfunctio
