@@ -3,5 +3,5 @@
 "VERSION:  0.9
 "LICENSE:  MIT
 
-command! HTMLMinifier call htmlminifier#Minifier()
+command! -nargs=? HTMLMinifier call htmlminifier#Minifier(<f-args>)
 command! -range HTMLCommentRemove <line1>,<line2>call htmlminifier#CommentRemove()

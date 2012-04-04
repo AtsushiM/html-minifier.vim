@@ -27,10 +27,12 @@ function! htmlminifier#CommentRemove()
         endif
     endwhile
 
-    echo ret
     call setline('.', ret)
 endfunction
-function! htmlminifier#Minifier()
+
+function! htmlminifier#Minifier(...)
+    " TODO: 特定のファイル名を保存した場合に自動ミニファイ
+    " TODO: 行末スペースは纏めて削除
     " remove return & indent
     let html = readfile(expand('%'))
     let ret = ''
@@ -80,5 +82,25 @@ function! htmlminifier#Minifier()
     endwhile
     let ret = min
 
-    call system('echo -e "'.min.'" > '.expand('%:p:r').'.min.'.expand('%:e'))
+    " remove program comment
+    let end = 0
+    let min = ''
+    while end == 0
+        let i = matchlist(ret, '\v(.{-})/\*.{-}\*/(.*)')
+        if i != []
+            let min = min.i[1]
+            let ret = i[2]
+        else
+            let min = min.ret
+            let end = 1
+        endif
+    endwhile
+    let ret = min
+
+    if a:0 != 0
+        let fname = a:000[0]
+    else
+        let fname = expand('%:p:r').'.min.'.expand('%:e')
+    endif
+    call writefile([ret], fname)
 endfunctio
