@@ -31,10 +31,31 @@ function! htmlminifier#CommentRemove()
 endfunction
 
 function! htmlminifier#Minifier(...)
+    let output = ''
+    let input = ''
+
+    if a:0 != 0
+        for e in a:000
+            let eary = split(e,'=')
+            if eary[0] == '-input'
+                let input = eary[1]
+            elseif eary[0] == '-output'
+                let output = eary[1]
+            endif
+        endfor
+    endif
+
+    if input == ''
+        let input = expand('%')
+    endif
+    if output == ''
+        let output = fnamemodify(input, ':p:r').'.min.'.fnamemodify(input, ':e')
+    endif
+
     " TODO: 特定のファイル名を保存した場合に自動ミニファイ
     " TODO: 行末スペースは纏めて削除
     " remove return & indent
-    let html = readfile(expand('%'))
+    let html = readfile(input)
     let ret = ''
     for e in html
         let i = matchlist(e, '\v^(\s*)(.*)')
@@ -97,10 +118,5 @@ function! htmlminifier#Minifier(...)
     endwhile
     let ret = min
 
-    if a:0 != 0
-        let fname = a:000[0]
-    else
-        let fname = expand('%:p:r').'.min.'.expand('%:e')
-    endif
-    call writefile([ret], fname)
+    call writefile([ret], output)
 endfunctio
