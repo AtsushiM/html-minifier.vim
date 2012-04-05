@@ -33,6 +33,8 @@ endfunction
 function! htmlminifier#Minifier(...)
     let output = ''
     let input = ''
+    let start = 0
+    let end = 0
 
     if a:0 != 0
         for e in a:000
@@ -41,6 +43,10 @@ function! htmlminifier#Minifier(...)
                 let input = eary[1]
             elseif eary[0] == '-output'
                 let output = eary[1]
+            elseif eary[0] == '-start'
+                let start = eary[1] - 1
+            elseif eary[0] == '-end'
+                let end = eary[1] - 1
             endif
         endfor
     endif
@@ -52,16 +58,31 @@ function! htmlminifier#Minifier(...)
         let output = fnamemodify(input, ':p:r').'.min.'.fnamemodify(input, ':e')
     endif
 
-    " TODO: 特定のファイル名を保存した場合に自動ミニファイ
-    " TODO: 行末スペースは纏めて削除
     " remove return & indent
     let html = readfile(input)
+
+    if end == 0
+        let end = len(html)
+    endif
+
+    let ary_before = []
+    let ary_after = []
     let ret = ''
+    let pointer = 0
     for e in html
-        let i = matchlist(e, '\v^(\s*)(.*)')
-        if i != []
-            let ret = ret.i[2]
+        if pointer >= start && pointer <= end
+            let i = matchlist(e, '\v^(\s*)(.*)')
+            if i != []
+                let ret = ret.i[2]
+            endif
+        else
+            if pointer < start
+                call add(ary_before, e)
+            else
+                call add(ary_after, e)
+            endif
         endif
+        let pointer = pointer + 1
     endfor
 
     " remove space
@@ -118,5 +139,8 @@ function! htmlminifier#Minifier(...)
     endwhile
     let ret = min
 
-    call writefile([ret], output)
+    call add(ary_before, ret)
+    call extend(ary_before, ary_after)
+
+    call writefile(ary_before, output)
 endfunctio
