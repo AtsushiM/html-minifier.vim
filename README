@@ -1,5 +1,33 @@
 :HTMLMinifier
 をhtml上で実行すればファイルと同改装に~.min.htmlとして書き出します。
 
-:HTMLMinifier fname
-でfnameがファイル名になります
+ミニファイルール：
+・改行、インデント、コメントの削除および連続したスペースの縮小を行います。
+・javascript、phpなどのコメントは/* ~ */しか削除されません。
+その為、//~ などでコメントアウトすると行がまとめられた際にエラーになる可能性が高くなります。
+
+
+オプション：
+-input=hogehoge.html
+入力ファイルをhogehoge.htmlに変更します。
+
+-output=hogehoge.html
+出力ファイルをhogehoge.htmlに変更します。
+
+-start=0
+ミニファイを実行開始する行を指定します。
+
+-end=0
+ミニファイを終了する行を指定します。
+0の場合、最終行までミニファイします。
+
+
+例:
+現在ファイルをhogehoge.htmlで出力
+:HTMLMinifier -output=hogehoge.html
+
+hogehoge.htmlをfugafuga.htmlで出力
+:HTMLMinifier -input=hogehoge.html -output=fugafuga.html
+
+hoge.htmlの10〜30行をfuga.htmlで出力
+:HTMLMinifier -input=hoge.html -output=fuga.html -start=10 -end=30
