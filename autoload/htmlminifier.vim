@@ -17,7 +17,7 @@ function! htmlminifier#CommentRemove()
         if i != []
             let min = i[1]
 
-            let j = matchlist(i[2], '\v^(\[if)(.{-})(\[endif\])')
+            let j = matchlist(i[2], '\v^(\[)(.{-})(\])')
             if j != []
                 let min = min.'<!--'.i[2].'-->'
             endif
@@ -30,6 +30,7 @@ function! htmlminifier#CommentRemove()
         endif
     endwhile
 
+    echo ret
     call setline('.', ret)
 endfunction
 
@@ -113,7 +114,7 @@ function! htmlminifier#Minifier(...)
         if i != []
             let min = min.i[1]
 
-            let j = matchlist(i[2], '\v^(\[if)(.{-})(\[endif\])')
+            let j = matchlist(i[2], '\v^(\[)(.{-})(\])')
 
             if j != []
                 let min = min.'<!--'.i[2].'-->'
