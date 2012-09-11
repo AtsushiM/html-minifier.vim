@@ -39,6 +39,7 @@ function! htmlminifier#Minifier(...)
     let input = ''
     let start = 0
     let end = 0
+    let deletenullprop = 0
 
     if a:0 != 0
         for e in a:000
@@ -47,6 +48,8 @@ function! htmlminifier#Minifier(...)
                 let input = eary[1]
             elseif eary[0] == '-output'
                 let output = eary[1]
+            elseif eary[0] == '-deletenullprop'
+                let deletenullprop = eary[1]
             elseif eary[0] == '-start'
                 let start = eary[1] - 1
             elseif eary[0] == '-end'
@@ -104,6 +107,24 @@ function! htmlminifier#Minifier(...)
         endif
     endwhile
     let ret = min
+
+    " remove null propaty
+    if deletenullprop == 1
+        let end = 0
+        let min = ''
+        while end == 0
+            let i = matchlist(ret, '\v(.{-}) [a-z]+\=""(.*)')
+
+            if i != []
+                let min = min.i[1]
+                let ret = i[2]
+            else
+                let min = min.ret
+                let end = 1
+            endif
+        endwhile
+        let ret = min
+    endif
 
     " remove comment
     let end = 0
