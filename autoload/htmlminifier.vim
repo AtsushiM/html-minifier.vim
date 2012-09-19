@@ -167,6 +167,10 @@ function! htmlminifier#Minifier(...)
     call add(ary_before, ret)
     call extend(ary_before, ary_after)
 
+    let outdir = fnamemodify(output, ':h')
+    if !isdirectory(outdir)
+        call mkdir(outdir, 'p')
+    endif
     call writefile(ary_before, output, 'b')
 endfunctio
 
