@@ -40,6 +40,8 @@ function! htmlminifier#Minifier(...)
     let start = 0
     let end = 0
     let deletenullprop = 0
+    let removedebug = 0
+    let setdeploy = 0
 
     if a:0 != 0
         for e in a:000
@@ -50,6 +52,10 @@ function! htmlminifier#Minifier(...)
                 let output = eary[1]
             elseif eary[0] == '-deletenullprop'
                 let deletenullprop = eary[1]
+            elseif eary[0] == '-removedebug'
+                let removedebug = eary[1]
+            elseif eary[0] == '-setdeploy'
+                let setdeploy = eary[1]
             elseif eary[0] == '-start'
                 let start = eary[1] - 1
             elseif eary[0] == '-end'
@@ -163,6 +169,42 @@ function! htmlminifier#Minifier(...)
         endif
     endwhile
     let ret = min
+
+    " remove debug
+    if removedebug == 1
+        let end = 0
+        let min = ''
+        while end == 0
+            let i = matchlist(ret, '\v(.{-})\<!--\[debug\]--\>(.{-})\<!--\[/debug\]--\>(.*)')
+
+            if i != []
+                let min = min.i[1]
+                let ret = i[3]
+            else
+                let min = min.ret
+                let end = 1
+            endif
+        endwhile
+        let ret = min
+    endif
+
+    " set deploy
+    if setdeploy == 1
+        let end = 0
+        let min = ''
+        while end == 0
+            let i = matchlist(ret, '\v(.{-})\<!--\[deploy\](.{-})\[/deploy\]--\>(.*)')
+
+            if i != []
+                let min = min.i[1].i[2]
+                let ret = i[3]
+            else
+                let min = min.ret
+                let end = 1
+            endif
+        endwhile
+        let ret = min
+    endif
 
     call add(ary_before, ret)
     call extend(ary_before, ary_after)
